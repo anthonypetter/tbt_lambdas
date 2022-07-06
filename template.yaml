@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  TBT lambda functions
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  WherebyEventsListenerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: dist/
+      Handler: handlers/wherebyEvents.handler
+      Runtime: nodejs12.x
+      Layers:
+        - !Ref TBTLambdaDepsLayer
+      Events:
+        WhererbyEvent:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /wherebyEvent
+            Method: POST
+
+  TBTLambdaDepsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: tbt-lambda-deps
+      Description: Dependencies for tbt lambda app
+      ContentUri: dependencies/
